@@ -1,5 +1,5 @@
 export type RootStackParamList = {
     Home: undefined;          // Se não há parâmetros
     Aprendizagem: undefined;  // Adicione a rota Aprendizagem
-    // ... outras rotas
+    Desempenho: undefined;
 };

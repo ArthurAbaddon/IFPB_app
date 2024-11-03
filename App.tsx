@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home  from './src/screens/Home';
 import  Aprendizagem  from './src/screens/Aprendizagem';
+import Desempenho from './src/screens/Desempenho';
 import { RootStackParamList } from './src/@types/rootstack';
 import { styles, navigator} from './src/styles/styles';
 import LogoTitle from './src/styles/logo';
@@ -26,6 +27,7 @@ export default function App() {
       >
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="Aprendizagem" component={Aprendizagem} />
+          <Stack.Screen name="Desempenho" component={Desempenho} />
       </Stack.Navigator>
     </NavigationContainer> 
   );

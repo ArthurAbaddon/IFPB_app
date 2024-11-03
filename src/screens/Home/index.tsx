@@ -218,7 +218,7 @@ const renderSelectedValue = () => {
         <Pressable
             style={({ pressed }) => [
               styles.button,
-              { backgroundColor: pressed ? '#005BBB' : '#007AFF'}
+              { backgroundColor: pressed ? '#005BBB' : '#1E90FF'}
             ]}
             onPress={() => navigation.navigate('Aprendizagem')}
         >

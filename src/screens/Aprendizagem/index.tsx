@@ -12,6 +12,8 @@ const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
 const scrollViewRef = useRef<ScrollView | null>(null);
 
+const getPaddingBottom = () => (open_aprendizagem ? 350 : 200);
+
 // Função para renderizar o dropdown
 const renderDropdown = (
   open: boolean,
@@ -28,7 +30,7 @@ const renderDropdown = (
       value={value}
       items={items}
       setOpen={setOpen}
-      setValue={handleValueChange}
+      setValue={setValue}
       placeholder= {placeholder_drop}
       style={selectStyles.dropdown}
       dropDownContainerStyle={selectStyles.dropdownContainer}
@@ -47,6 +49,7 @@ const renderDropdown = (
       badgeStyle={badgeStyle.badgestyle}
       badgeDotStyle={badgeStyle.dotStyle}
       listMode="SCROLLVIEW"
+      
     />
   );
 }
@@ -55,17 +58,6 @@ const handleOpenAprendizagem = () => {
     console.log('Abrindo estilo de aprendizagem...'); // Log para depuração
     setOpen_aprendizagem((prevOpen) => !prevOpen); 
 };
-
-  // Função para lidar com a seleção de novos valores
-  const handleValueChange = (newValue: string[] | null) => {
-    if (newValue === null) return; // Se o valor for null, não faz nada
-
-    if (newValue.length > 3) {
-      Alert.alert("Limite de seleção", "Você pode selecionar no máximo 3 estilos.");
-    } else {
-      setValue_aprendizagem(newValue); // Atualiza o estado com os valores selecionados
-    }
-  };
 
 // Aprendizagem DropDown
 const [open_aprendizagem, setOpen_aprendizagem] = useState(false);
@@ -80,8 +72,18 @@ const items_aprendizagem = [
 { label: 'Sozinho', value: 'sozinho' },
 ];
 
+// Limita a seleção a 3 itens
+useEffect(() => {
+  if (value_aprendizagem.length > 3) {
+    Alert.alert("Limite de seleção", "Você pode selecionar no máximo 3 estilos.");
+    setOpen_aprendizagem(false);
+    setValue_aprendizagem(prev => prev.slice(0, 3)); // Limita o array para os primeiros 3 itens
+  }
+}, [value_aprendizagem]);
+
+
   return (
-    <ScrollView nestedScrollEnabled={true} ref={scrollViewRef} style={styles.scrollStyle} contentContainerStyle={styles.container_scroll}>
+    <ScrollView nestedScrollEnabled={true} ref={scrollViewRef} style={styles.scrollStyle} contentContainerStyle={[styles.container_scroll, { paddingBottom: getPaddingBottom() }]}>
     <View style={styles.container}>
     <View style={styles.title}>
         <Text style={styles.texttittle}>Cadastro</Text>
@@ -89,7 +91,7 @@ const items_aprendizagem = [
     <View style={styles.selectfields}>
       <Text style={styles.textinput}>Estilos de aprendizagem:</Text>
       {renderDropdown(open_aprendizagem, value_aprendizagem, items_aprendizagem, handleOpenAprendizagem, 
-      handleValueChange, "Selecione seus estilos (*max 3*)", 3000)}
+      setValue_aprendizagem, "Selecione seus estilos (max 3)", 3000)}
     </View>
     <View style={styles.inputfields}>
         <Text style={styles.textinput}>Disciplina com maior afinidade:</Text>
@@ -113,9 +115,9 @@ const items_aprendizagem = [
     <Pressable
         style={({ pressed }) => [
             styles.button,
-            { backgroundColor: pressed ? '#005BBB' : '#007AFF'}
+            { backgroundColor: pressed ? '#005BBB' : '#1E90FF'}
         ]}
-        //onPress={() => navigation.navigate('')}
+        onPress={() => navigation.navigate('Desempenho')}
     >
         <Text style={styles.buttonText}>Avançar</Text>
     </Pressable>

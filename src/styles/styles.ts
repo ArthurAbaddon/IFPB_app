@@ -57,8 +57,7 @@ export const styles = StyleSheet.create({
         backgroundColor: '#101545', // Cor de fundo do ScrollView
         
     },
-    container_scroll: {
-        paddingBottom: 200,   
+    container_scroll: {  
         backgroundColor: '#101545',
     },
     buttonfields:{
@@ -77,6 +76,26 @@ export const styles = StyleSheet.create({
         color: '#F0F0F0',
         fontSize: 20,
     },
+    horarioContainer: {
+        marginTop: 10,
+    },
+    intervaloContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 5,
+    },
+    adicionarBotaoHorario: {
+        backgroundColor: '#007AFF',
+        padding: 8,
+        borderRadius: 5,
+        alignItems: 'center',
+        marginTop: 10,
+      },
+      botaoTextoHorario: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontWeight: 'bold',
+      },
 });
 
 export const selectStyles = StyleSheet.create({
@@ -95,6 +114,7 @@ export const selectStyles = StyleSheet.create({
         maxHeight: 300,
         borderWidth: 1,
         backgroundColor: '#D9D9D9',
+
     },
     textdrop: {
         color: '#1E90FF',
@@ -143,21 +163,13 @@ export const navigator = StyleSheet.create({
 
 export const badgeStyle = StyleSheet.create({
     badgestyle: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
         backgroundColor: '#f9f9f9',
         borderRadius: 8,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
     },
     dotStyle: {
         borderRadius: 2
-    },
-    badgeContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        width: '80%',
-        padding: 10,
-        backgroundColor: '#f9f9f9',
-        borderRadius: 8,
     },
     badgeItem: {
         flexDirection: 'row',
