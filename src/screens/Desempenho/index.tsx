@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Text, View, TextInput, ScrollView, Pressable, Alert, TouchableOpacity } from 'react-native';
+import { Text, View, TextInput, ScrollView, Pressable, Alert, Keyboard  } from 'react-native';
 import { selectStyles, styles, badgeStyle } from '../../styles/styles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../../@types/rootstack';
 import { TextInputMask } from 'react-native-masked-text';
+import { useForm, Controller } from 'react-hook-form';
 import Dashboard from '../Dashboard';
 
 // Define o tipo Horarios para garantir segurança nos tipos
@@ -39,6 +40,8 @@ export default function Desempenho() {
     sabado: [{ inicio: null, fim: null }],
   });
 
+  const { control, handleSubmit, trigger, formState: { errors }, clearErrors } = useForm();
+
   const renderDropdownDesempenho = (
     open: boolean,
     value: string | null,
@@ -56,10 +59,10 @@ export default function Desempenho() {
         setOpen={setOpen}
         setValue={setValue}
         placeholder={placeholder_drop}
-        style={selectStyles.dropdown}
+        style={[selectStyles.dropdown, { borderColor: errors.desempenho ? 'red' : '#FFFFF' }]}
         dropDownContainerStyle={selectStyles.dropdownContainer}
         textStyle={selectStyles.textdrop}
-        placeholderStyle={selectStyles.placeholder}
+        placeholderStyle={[selectStyles.placeholder, { color: errors.desempenho ? 'red' : '#A9A9A9' }]}
         selectedItemLabelStyle={selectStyles.selectedItemLabel}
         labelStyle={selectStyles.itemLabelSelected}
         selectedItemContainerStyle={selectStyles.selectedItemContainer}
@@ -91,10 +94,10 @@ export default function Desempenho() {
         setOpen={setOpen}
         setValue={setValue}
         placeholder={placeholder_drop}
-        style={selectStyles.dropdown}
+        style={[selectStyles.dropdown, { borderColor: errors.dias ? 'red' : '#FFFFF' }]}
         dropDownContainerStyle={selectStyles.dropdownContainer}
         textStyle={selectStyles.textdrop}
-        placeholderStyle={selectStyles.placeholder}
+        placeholderStyle={[selectStyles.placeholder, { color: errors.dias ? 'red' : '#A9A9A9' }]}
         selectedItemLabelStyle={selectStyles.selectedItemLabel}
         labelStyle={selectStyles.itemLabelSelected}
         selectedItemContainerStyle={selectStyles.selectedItemContainer}
@@ -147,39 +150,39 @@ export default function Desempenho() {
 
     // Validação do texto
     if (text.length === 5 && text.includes(':')) {
-        const [hourStr, minuteStr] = text.split(':');
-        const hour = Number(hourStr);
-        const minute = Number(minuteStr);
+      const [hourStr, minuteStr] = text.split(':');
+      const hour = Number(hourStr);
+      const minute = Number(minuteStr);
 
-        // Verificação de horas e minutos válidos
-        if (!isNaN(hour) && !isNaN(minute) && hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
-            novoHorario = new Date();
-            novoHorario.setHours(hour, minute);
+      // Verificação de horas e minutos válidos
+      if (!isNaN(hour) && !isNaN(minute) && hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
+        novoHorario = new Date();
+        novoHorario.setHours(hour, minute);
 
-            // Verifica se o horário de fim é menor que o horário de início
-            const horarioInicio = horarios[dia]?.[index]?.inicio;
-            if (tipo === 'fim' && horarioInicio && novoHorario < horarioInicio) {
-                Alert.alert('Erro', 'A hora de fim não pode ser menor que a hora de início.');
-                novoHorario = null; // Limpa o horário em caso de erro
-                setInputValues((prev) => ({ ...prev, [`${dia}-${index}-${tipo}`]: '' })); // Limpa o campo de entrada
-                return;
-            }
-        } else {
-            Alert.alert('Erro', 'Horário inválido. As horas devem ser entre 00 e 23 e os minutos entre 00 e 59.');
-            novoHorario = null; // Limpa o horário em caso de erro
-            setInputValues((prev) => ({ ...prev, [`${dia}-${index}-${tipo}`]: '' })); // Limpa o campo de entrada
-            return;
+        // Verifica se o horário de fim é menor que o horário de início
+        const horarioInicio = horarios[dia]?.[index]?.inicio;
+        if (tipo === 'fim' && horarioInicio && novoHorario < horarioInicio) {
+          Alert.alert('Erro', 'A hora de fim não pode ser menor que a hora de início.');
+          novoHorario = null; // Limpa o horário em caso de erro
+          setInputValues((prev) => ({ ...prev, [`${dia}-${index}-${tipo}`]: '' })); // Limpa o campo de entrada
+          return;
         }
+      } else {
+        Alert.alert('Erro', 'Horário inválido. As horas devem ser entre 00 e 23 e os minutos entre 00 e 59.');
+        novoHorario = null; // Limpa o horário em caso de erro
+        setInputValues((prev) => ({ ...prev, [`${dia}-${index}-${tipo}`]: '' })); // Limpa o campo de entrada
+        return;
+      }
 
-        // Atualiza o estado geral dos horários
-        setHorarios((prevHorarios) => ({
-            ...prevHorarios,
-            [dia]: prevHorarios[dia].map((intervalo, idx) =>
-                idx === index ? { ...intervalo, [tipo]: novoHorario } : intervalo
-            ),
-        }));
+      // Atualiza o estado geral dos horários
+      setHorarios((prevHorarios) => ({
+        ...prevHorarios,
+        [dia]: prevHorarios[dia].map((intervalo, idx) =>
+          idx === index ? { ...intervalo, [tipo]: novoHorario } : intervalo
+        ),
+      }));
     }
-};
+  };
 
   // Desempenho DropDown
   const [open_desempenho, setOpen_desempenho] = useState(false);
@@ -205,6 +208,20 @@ export default function Desempenho() {
     { label: 'Sabado', value: 'sabado' },
   ];
 
+
+  const handleAvancar = async () => {
+    clearErrors(); // Limpa erros antes de validar
+    const result = await trigger(); // Dispara a validação dos campos
+    console.log("Resultado da validação:", result); // Verifique o resultado da validação
+    console.log("Erros de validação:", errors); // Inspecione o objeto de erros
+    if (result) {
+      console.log("Todos os campos estão válidos. Avançando...");
+      navigation.navigate('Dashboard')
+    } else {
+      console.log("Existem campos obrigatórios que não foram preenchidos.");
+    }
+  };
+
   return (
     <ScrollView nestedScrollEnabled={true} ref={scrollViewRef} style={styles.scrollStyle} contentContainerStyle={[styles.container_scroll, { paddingBottom: getPaddingBottom(open_dias) }]}>
       <View style={styles.container}>
@@ -213,13 +230,33 @@ export default function Desempenho() {
         </View>
         <View style={styles.selectfields}>
           <Text style={styles.textinput}>Desempenho : (1 a 5)</Text>
-          {renderDropdownDesempenho(open_desempenho, value_desempenho, items_desempenho, handleOpenDesempenho,
-            setValue_desempenho, "Selecione uma nota", 3000)}
+          <Controller
+            control={control}
+            name="desempenho"
+            rules={{ required: true }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              renderDropdownDesempenho(open_desempenho, value_desempenho, items_desempenho, handleOpenDesempenho,
+                (selectedValue) => {
+                  onChange(selectedValue); // Atualiza o valor no React Hook Form
+                  setValue_desempenho(selectedValue); // Chama sua função de manipulação
+                }, errors.desempenho ? 'Campo obrigatório' : 'Selecione uma nota', 3000) // Adiciona a borda vermelha se houver erro)
+            )}
+          />
         </View>
         <View style={styles.selectfields}>
           <Text style={styles.textinput}>Dias disponíveis:</Text>
-          {renderDropdownDias(open_dias, value_dias, items_dias, handleOpenDias,
-            setValue_dias, "Selecione os dias disponíveis", 2000)}
+          <Controller
+            control={control}
+            name="dias"
+            rules={{ required: true }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              renderDropdownDias(open_dias, value_dias, items_dias, handleOpenDias,
+                (selectedValue) => {
+                  onChange(selectedValue); // Atualiza o valor no React Hook Form
+                  setValue_dias(selectedValue); // Chama sua função de manipulação
+                }, errors.desempenho ? 'Campo obrigatório' : 'Selecione os dias disponíveis', 2000)
+            )}
+          />
         </View>
         <View>
           {value_dias.map((dia) => (
@@ -227,25 +264,53 @@ export default function Desempenho() {
               <Text style={[styles.textinput, { marginTop: 16 }]}>{formatarDia(dia)}</Text>
               {horarios[dia as keyof Horarios].map((intervalo, index) => (
                 <View key={index} style={{ alignItems: 'center' }}>
-                  <TextInputMask
-                    type={'datetime'}
-                    options={{
-                      format: 'HH:mm', // Formato de 24 horas
-                    }}
-                    placeholder="Hora de início"
-                    value={inputValues[`${dia}-${index}-inicio`] || ''}
-                    onChangeText={(text) => handleInputChange(dia as keyof Horarios, index, 'inicio', text)}
-                    style={styles.input}
+                  <Controller
+                    control={control}
+                    name={`${dia}-${index}-inicio`}
+                    rules={{ required: true }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInputMask
+                        type={'datetime'}
+                        options={{
+                          format: 'HH:mm', // Formato de 24 horas
+                        }}
+                        placeholder={errors[`${dia}-${index}-inicio`] ? 'Campo obrigatório' : 'Início'}
+                        placeholderTextColor={errors[`${dia}-${index}-inicio`] ? 'red' : '#A9A9A9'}
+                        value={inputValues[`${dia}-${index}-inicio`] || ''}
+                        onChangeText={(text) => { handleInputChange(dia as keyof Horarios, index, 'inicio', text);
+                          onChange(text);
+                          {if (text.length === 5) { // Verifica se o comprimento da entrada é 5
+                              Keyboard.dismiss(); // Fecha o teclado
+                            }
+                          }
+                        }}
+                        style={[styles.input, { borderColor: errors[`${dia}-${index}-inicio`] ? 'red' : 'left' }]}
+                      />
+                    )}
                   />
-                  <TextInputMask
-                    type={'datetime'}
-                    options={{
-                      format: 'HH:mm', // Formato de 24 horas
-                    }}
-                    placeholder="Hora de Fim"
-                    value={inputValues[`${dia}-${index}-fim`] || ''}
-                    onChangeText={(text) => handleInputChange(dia as keyof Horarios, index, 'fim', text)}
-                    style={styles.input}
+                  <Controller
+                    control={control}
+                    name={`${dia}-${index}-fim`}
+                    rules={{ required: true }}
+                    render={({ field: { onChange, onBlur, value } }) => (
+                      <TextInputMask
+                        type={'datetime'}
+                        options={{
+                          format: 'HH:mm', // Formato de 24 horas
+                        }}
+                        placeholder={errors[`${dia}-${index}-fim`] ? 'Campo obrigatório' : 'Final'}
+                        placeholderTextColor={errors[`${dia}-${index}-fim`] ? 'red' : '#A9A9A9'}
+                        value={inputValues[`${dia}-${index}-fim`] || ''}
+                        onChangeText={(text) => {handleInputChange(dia as keyof Horarios, index, 'fim', text);
+                          onChange(text);
+                          {if (text.length === 5) { // Verifica se o comprimento da entrada é 5
+                            Keyboard.dismiss(); // Fecha o teclado
+                          }
+                        }
+                        }}
+                        style={[styles.input, { borderColor: errors[`${dia}-${index}-fim`] ? 'red' : 'left' }]}
+                      />
+                    )}
                   />
                 </View>
               ))}
@@ -258,7 +323,7 @@ export default function Desempenho() {
               styles.button,
               { backgroundColor: pressed ? '#005BBB' : '#1E90FF' }
             ]}
-            onPress={() => navigation.navigate('Dashboard')}
+            onPress={handleAvancar}
           >
             <Text style={styles.buttonText}>Concluir</Text>
           </Pressable>
