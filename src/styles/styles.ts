@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, ViewStyle  } from 'react-native';
 
 export const styles = StyleSheet.create({ 
     container: {
@@ -80,7 +80,7 @@ export const styles = StyleSheet.create({
         marginTop: 10,
     },
     intervaloContainer: {
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-between',
         marginBottom: 5,
     },
@@ -187,4 +187,87 @@ export const badgeStyle = StyleSheet.create({
         color: 'red',
         marginLeft: 5,
     },
+})
+
+export const tutor = StyleSheet.create({
+    chatfield:{
+        backgroundColor: "#0C1034",
+        paddingHorizontal: 4,
+        marginTop: 20,
+        marginBottom: 20,
+        flex: 1,
+        
+    },
+    studyRoutine:{
+        backgroundColor: "#0C1034",
+
+    },
+    texttutor:{
+        color: '#FFFFFF',
+        marginTop: 10,
+        marginBottom: 10,
+        fontSize: 10,
+    },
+    userText:{
+        backgroundColor: '#3599FA',
+        height: 40,
+        color: "#FFFFFF",
+        borderRadius: 20,
+        width: '85%',
+        textAlign: 'left',
+        padding: 10,
+        marginTop: 380,
+    },
+    alignRight: {
+        alignSelf: 'flex-end', // Alinha o input à direita
+    },
+    alignLeft: {
+        alignSelf: 'flex-start', // Alinha o input à direita
+    },
+    okButton:{
+        backgroundColor: '#1E90FF',
+        width: '25%',
+        height: 40,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center', // Centraliza o conteúdo do botão verticalmente
+        marginLeft: 15,
+        marginRight: 0,
+    },
+    buttonText:{
+        color: "#FFFFFF",
+        textAlign: 'center',
+        fontSize: 20,
+    },
+    tutorText:{
+        color: "#FFFFFF",
+        fontSize: 15,
+    },
+    inputChat: {
+        marginTop: 1,
+        marginBottom: 20,
+        flexDirection: 'row', // Coloca os filhos lado a lado
+        alignItems: 'center', // Centraliza verticalmente os filhos
+    },
+    tutorDialog: {
+        marginVertical: 16,
+        backgroundColor: '#2b2b4a',
+        padding: 16,
+        borderRadius: 8,
+        minHeight: 60,
+    },
+    lottie:{
+        width: '40%', 
+        height: 30, 
+        alignSelf: 'center', 
+        marginVertical: 10, 
+    },
+    input:{
+        width: '70%',
+        backgroundColor: '#D9D9D9',
+        borderRadius: 10,
+        height: 40,
+        textAlign: 'left',
+        padding: 10,
+    }
 })

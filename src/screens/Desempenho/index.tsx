@@ -4,7 +4,13 @@ import { selectStyles, styles, badgeStyle } from '../../styles/styles';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useNavigation, NavigationProp  } from '@react-navigation/native';
 import { RootStackParamList } from '../../@types/rootstack';
+import DateTimePicker, {DateTimePickerEvent} from '@react-native-community/datetimepicker';
+import Dashboard from '../Dashboard';
 
+interface Intervalo {
+  inicio: Date | null;
+  fim: Date | null;
+}
 
 export default function Desempenho() {
 
@@ -12,9 +18,25 @@ const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
 const scrollViewRef = useRef<ScrollView | null>(null);
 
-const getPaddingBottom = () => (open_dias ? 350 : 200);
+const getPaddingBottom = (isOpen: boolean) => (isOpen ? 350 : 200);;
 
-const [horarios, setHorarios] = useState<{ [key: string]: { inicio: string; fim: string }[] }>({});
+const [selectedDay, setSelectedDay] = useState<string | null>(null);
+const [pickerType, setPickerType] = useState<'start' | 'end' | null>(null);
+
+// Estado para armazenar horários de início e fim de cada dia
+const [horarios, setHorarios] = useState<Record<string, Intervalo[]>>({});{
+({
+  domingo: { inicio: null, fim: null },
+  segunda: { inicio: null, fim: null },
+  terca: { inicio: null, fim: null },
+  quarta: { inicio: null, fim: null },
+  quinta: { inicio: null, fim: null },
+  sexta: { inicio: null, fim: null },
+  sabado: { inicio: null, fim: null },
+});
+
+const [showStartPicker, setShowStartPicker] = useState(false);
+const [showEndPicker, setShowEndPicker] = useState(false);
 
 const renderDropdownDesempenho = (
     open: boolean,
@@ -101,23 +123,34 @@ const handleOpenDias = () => {
     setOpen_dias((prevOpen) => !prevOpen); 
 };
 
+// Função para adicionar um novo intervalo para um dia específico
 const adicionarIntervalo = (dia: string) => {
-    setHorarios(prevHorarios => ({
-      ...prevHorarios,
-      [dia]: [...(prevHorarios[dia] || []), { inicio: '', fim: '' }],
-    }));
+  setHorarios((prevHorarios) => ({
+    ...prevHorarios,
+    [dia]: [...(prevHorarios[dia] || []), { inicio: null, fim: null }]
+  }));
 };
 
-const handleHorarioChange = (dia: string, index: number, tipo: 'inicio' | 'fim', valor: string) => {
-    setHorarios(prevHorarios => {
-      const horariosDoDia = prevHorarios[dia] || []; // Garante que é um array
-      return {
-        ...prevHorarios,
-        [dia]: horariosDoDia.map((intervalo, i) =>
-          i === index ? { ...intervalo, [tipo]: valor } : intervalo
-        ),
-      };
-    });
+// Função para atualizar o horário de início ou fim
+const handlePickerChange = (event: any, selectedDate: Date | undefined) => {
+  if (selectedDay && pickerType && selectedDate) {
+    setHorarios((prevHorarios) => ({
+      ...prevHorarios,
+      [selectedDay]: prevHorarios[selectedDay].map((intervalo, index) =>
+        index === 0 ? { ...intervalo, [pickerType]: selectedDate } : intervalo
+      )
+    }));
+  }
+  pickerType === 'start' ? setShowStartPicker(false) : setShowEndPicker(false);
+};
+
+const openPickerForDay = (day: string, pickerType: 'start' | 'end') => {
+  setSelectedDay(day);
+  if (pickerType === 'start') {
+    setShowStartPicker(true);
+  } else {
+    setShowEndPicker(true);
+  }
 };
 
 // Desempenho DropDown
@@ -145,7 +178,7 @@ const items_dias = [
 ];
 
   return (
-    <ScrollView nestedScrollEnabled={true} ref={scrollViewRef} style={styles.scrollStyle} contentContainerStyle={[styles.container_scroll, { paddingBottom: getPaddingBottom() }]}>
+    <ScrollView nestedScrollEnabled={true} ref={scrollViewRef} style={styles.scrollStyle} contentContainerStyle={[styles.container_scroll, { paddingBottom: getPaddingBottom(open_dias) }]}>
     <View style={styles.container}>
     <View style={styles.title}>
         <Text style={styles.texttittle}>Cadastro</Text>
@@ -158,28 +191,38 @@ const items_dias = [
     <View style={styles.selectfields}>
     <Text style={styles.textinput}>Dias disponíveis:</Text>
     {renderDropdownDias(open_dias, value_dias, items_dias, handleOpenDias, 
-      setValue_dias, "Selecione seus estilos (max 3)", 2000)}
+      setValue_dias, "Selecione os dias disponíveis", 2000)}
     </View>
     <View>
-    {value_dias.map(dia => (
+    {value_dias.map((dia) => (
           <View key={dia} style={styles.horarioContainer}>
             <Text style={styles.textinput}>{dia}</Text>
-            {(horarios[dia] || [{ inicio: '', fim: '' }]).map((intervalo, index) => (
+            {(horarios[dia] || [{ inicio: null, fim: null }]).map((intervalo: Intervalo, index: number) => (
               <View key={index} style={styles.intervaloContainer}>
                 <TextInput
-                  style={styles.input}
-                  placeholder="Início"
-                  value={intervalo.inicio}
-                  onChangeText={(text) => handleHorarioChange(dia, index, 'inicio', text)}
+                  value={
+                    intervalo.inicio
+                      ? intervalo.inicio.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      : ''
+                  }
+                  placeholder="Hora de Início"
+                  onFocus={() => openPickerForDay(dia, 'start')}
+                  style={{ borderColor: 'gray', borderWidth: 1, padding: 8, marginBottom: 5 }}
                 />
+
                 <TextInput
-                  style={styles.input}
-                  placeholder="Fim"
-                  value={intervalo.fim}
-                  onChangeText={(text) => handleHorarioChange(dia, index, 'fim', text)}
+                  value={
+                    intervalo.fim
+                      ? intervalo.fim.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      : ''
+                  }
+                  placeholder="Hora de Fim"
+                  onFocus={() => openPickerForDay(dia, 'end')}
+                  style={{ borderColor: 'gray', borderWidth: 1, padding: 8, marginBottom: 5 }}
                 />
               </View>
             ))}
+
             <TouchableOpacity
               style={styles.adicionarBotaoHorario}
               onPress={() => adicionarIntervalo(dia)}
@@ -188,6 +231,26 @@ const items_dias = [
             </TouchableOpacity>
           </View>
         ))}
+
+        {showStartPicker && (
+          <DateTimePicker
+            value={horarios[selectedDay!]?.[0]?.inicio || new Date()}
+            mode="time"
+            is24Hour={true}
+            display="default"
+            onChange={handlePickerChange}
+          />
+        )}
+
+        {showEndPicker && (
+          <DateTimePicker
+            value={horarios[selectedDay!]?.[0]?.fim || new Date()}
+            mode="time"
+            is24Hour={true}
+            display="default"
+            onChange={handlePickerChange}
+          />
+        )}
     </View>
     <View style={(styles.buttonfields)}>
     <Pressable
@@ -195,7 +258,7 @@ const items_dias = [
             styles.button,
             { backgroundColor: pressed ? '#005BBB' : '#1E90FF'}
         ]}
-        //onPress={() => navigation.navigate('')}
+        onPress={() => navigation.navigate('Dashboard')}
     >
         <Text style={styles.buttonText}>Concluir</Text>
     </Pressable>
@@ -203,5 +266,5 @@ const items_dias = [
     </View>
     </ScrollView> 
   );
-  
+  }  
 };

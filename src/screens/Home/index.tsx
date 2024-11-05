@@ -12,6 +12,8 @@ const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 const scrollViewRef = useRef<ScrollView | null>(null);
 const [dropdownYPosition, setDropdownYPosition] = useState<number | null>(null);
 
+const getPaddingBottom = (isOpen: boolean) => (isOpen ? 350 : 200);
+
 // Função para renderizar o dropdown
 const renderDropdown = (
   open: boolean,
@@ -179,7 +181,7 @@ const renderSelectedValue = () => {
   ];
 
   return (
-    <ScrollView nestedScrollEnabled={true} ref={scrollViewRef} style={styles.scrollStyle} contentContainerStyle={styles.container_scroll}>
+    <ScrollView nestedScrollEnabled={true} ref={scrollViewRef} style={styles.scrollStyle} contentContainerStyle={[styles.container_scroll, { paddingBottom: getPaddingBottom(open_escolaridade || open_fundamental || open_medio) }]}>
     <View style={styles.container}>
     <View style={styles.title}>
         <Text style={styles.texttittle}>Cadastro</Text>
