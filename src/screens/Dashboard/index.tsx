@@ -2,6 +2,7 @@ import React ,{ useState, useRef, useEffect  } from 'react';
 import { Text, View, TextInput, ScrollView, Pressable, Alert, TouchableOpacity } from 'react-native';
 import { styles, tutor } from '../../styles/styles';
 import LottieView from 'lottie-react-native';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { useNavigation, NavigationProp  } from '@react-navigation/native';
 import { RootStackParamList } from '../../@types/rootstack';
 
@@ -17,18 +18,26 @@ const [userQuestion, setUserQuestion] = useState('');
 const [userQuestionDispaly, setuserQuestionDispaly] = useState('');
 const [tutorResponses, setTutorResponses] = useState<string[]>([]); 
 const [isInputVisible, setIsInputVisible] = useState(false);
+const [chatHistory, setChatHistory] = useState<{ type: 'user' | 'tutor'; text: string }[]>([]);
 
 const handleAskQuestion = () => {
     if (userQuestion.trim()) {
-        setIsInputVisible(true);
+        // Adiciona a pergunta do usuário ao histórico de chat
+        setChatHistory(prevHistory => [
+            ...prevHistory,
+            { type: 'user', text: userQuestion }
+        ]);
         setIsTyping(true);
-        // Simula um tempo de resposta do tutor
+
+        // Simula o tempo de resposta do tutor
         setTimeout(() => {
-            setTutorResponses([...tutorResponses, `Resposta do tutor para: ${userQuestion}`]);
+            setChatHistory(prevHistory => [
+                ...prevHistory,
+                { type: 'tutor', text: `Resposta do tutor para: ${userQuestion}` }
+            ]);
             setUserQuestion(''); // Limpa o campo de entrada
-            setuserQuestionDispaly(userQuestion)
             setIsTyping(false);
-        }, 2000); // tempo em ms
+        }, 2000);
     }
 };
 
@@ -37,24 +46,23 @@ const handleAskQuestion = () => {
         {/* Caixa de diálogo do tutor */}
         <View style={tutor.chatfield}>
             <ScrollView style={tutor.studyRoutine}>
-                {isTyping && (
-                    <LottieView
-                        source={require('../../assets/loading.json')} // substitua pelo caminho correto do arquivo JSON
-                        autoPlay
-                        loop
-                        style={tutor.lottie}
-                    />
-                    )}
-                    {/* Exibe todas as respostas armazenadas */}
-                    {tutorResponses.map((response, index) => (
-                    <Text key={index} style={tutor.tutorText}>{response}</Text>
+                {chatHistory.map((message, index) => (
+                        <View key={index} style={{ alignSelf: message.type === 'user' ? 'flex-end' : 'flex-start', marginBottom: 8, marginLeft:3, }}>
+                            {/* {message.type === 'tutor' && (
+                                <AntDesign name="user" size={32} color='#FFF' style={tutor.icon} />
+                            )} */}
+                            <TextInput  style={message.type === 'user' ? tutor.userText : tutor.tutorText} multiline={true} editable={false}>
+                                {message.text}
+                            </TextInput >
+                        </View>
                     ))}
-                    {isInputVisible && (
-                        <TextInput 
-                            value={userQuestionDispaly}
-                            style={[tutor.userText, tutor.alignRight]}
-                            editable={false}>
-                        </TextInput>
+                    {isTyping && (
+                        <LottieView
+                            source={require('../../assets/loading.json')} // Substitua pelo caminho correto do arquivo JSON
+                            autoPlay
+                            loop
+                            style={tutor.lottie}
+                        />
                     )}
             </ScrollView>
         </View>

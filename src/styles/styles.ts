@@ -194,7 +194,7 @@ export const tutor = StyleSheet.create({
         backgroundColor: "#0C1034",
         paddingHorizontal: 4,
         marginTop: 20,
-        marginBottom: 20,
+        marginBottom: 10,
         flex: 1,
         
     },
@@ -210,13 +210,14 @@ export const tutor = StyleSheet.create({
     },
     userText:{
         backgroundColor: '#3599FA',
-        height: 40,
+        maxHeight: '100%',
         color: "#FFFFFF",
         borderRadius: 20,
-        width: '85%',
+        maxWidth: '80%',
         textAlign: 'left',
         padding: 10,
-        marginTop: 380,
+        marginTop: 10,
+        textAlignVertical: 'top',
     },
     alignRight: {
         alignSelf: 'flex-end', // Alinha o input à direita
@@ -245,7 +246,7 @@ export const tutor = StyleSheet.create({
     },
     inputChat: {
         marginTop: 1,
-        marginBottom: 20,
+        marginBottom: 10,
         flexDirection: 'row', // Coloca os filhos lado a lado
         alignItems: 'center', // Centraliza verticalmente os filhos
     },
@@ -269,5 +270,8 @@ export const tutor = StyleSheet.create({
         height: 40,
         textAlign: 'left',
         padding: 10,
-    }
+    },
+    icon:{
+        marginRight: 8, // Espaço entre o ícone e o texto
+    },
 })
