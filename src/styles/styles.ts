@@ -103,7 +103,6 @@ export const selectStyles = StyleSheet.create({
         height: 40,
         width: '100%',
         marginTop: 5,
-        borderColor: '#FFFFF',
         borderWidth: 1,
         borderRadius: 10,
         backgroundColor: '#D9D9D9',

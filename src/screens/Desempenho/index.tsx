@@ -59,10 +59,10 @@ export default function Desempenho() {
         setOpen={setOpen}
         setValue={setValue}
         placeholder={placeholder_drop}
-        style={[selectStyles.dropdown, { borderColor: errors.desempenho ? 'red' : '#FFFFF' }]}
+        style={[selectStyles.dropdown, { borderColor: errors.desempenho ? '#f05656' : '#FFFFF' }]}
         dropDownContainerStyle={selectStyles.dropdownContainer}
         textStyle={selectStyles.textdrop}
-        placeholderStyle={[selectStyles.placeholder, { color: errors.desempenho ? 'red' : '#A9A9A9' }]}
+        placeholderStyle={[selectStyles.placeholder, { color: errors.desempenho ? '#f05656' : '#A9A9A9' }]}
         selectedItemLabelStyle={selectStyles.selectedItemLabel}
         labelStyle={selectStyles.itemLabelSelected}
         selectedItemContainerStyle={selectStyles.selectedItemContainer}
@@ -94,10 +94,10 @@ export default function Desempenho() {
         setOpen={setOpen}
         setValue={setValue}
         placeholder={placeholder_drop}
-        style={[selectStyles.dropdown, { borderColor: errors.dias ? 'red' : '#FFFFF' }]}
+        style={[selectStyles.dropdown, { borderColor: errors.dias ? '#f05656' : '#FFFFF' }]}
         dropDownContainerStyle={selectStyles.dropdownContainer}
         textStyle={selectStyles.textdrop}
-        placeholderStyle={[selectStyles.placeholder, { color: errors.dias ? 'red' : '#A9A9A9' }]}
+        placeholderStyle={[selectStyles.placeholder, { color: errors.dias ? '#f05656' : '#A9A9A9' }]}
         selectedItemLabelStyle={selectStyles.selectedItemLabel}
         labelStyle={selectStyles.itemLabelSelected}
         selectedItemContainerStyle={selectStyles.selectedItemContainer}
@@ -214,9 +214,13 @@ export default function Desempenho() {
     const result = await trigger(); // Dispara a validação dos campos
     console.log("Resultado da validação:", result); // Verifique o resultado da validação
     console.log("Erros de validação:", errors); // Inspecione o objeto de erros
-    if (result) {
+  
+    // Verifica se o campo do dropdown está vazio
+    const isDropdownValid = value_dias && value_dias.length > 0;
+  
+    if (result && isDropdownValid) {
       console.log("Todos os campos estão válidos. Avançando...");
-      navigation.navigate('Dashboard')
+      navigation.navigate('Dashboard'); // Navegar para a próxima página
     } else {
       console.log("Existem campos obrigatórios que não foram preenchidos.");
     }
@@ -275,7 +279,7 @@ export default function Desempenho() {
                           format: 'HH:mm', // Formato de 24 horas
                         }}
                         placeholder={errors[`${dia}-${index}-inicio`] ? 'Campo obrigatório' : 'Início'}
-                        placeholderTextColor={errors[`${dia}-${index}-inicio`] ? 'red' : '#A9A9A9'}
+                        placeholderTextColor={errors[`${dia}-${index}-inicio`] ? '#f05656' : '#A9A9A9'}
                         value={inputValues[`${dia}-${index}-inicio`] || ''}
                         onChangeText={(text) => { handleInputChange(dia as keyof Horarios, index, 'inicio', text);
                           onChange(text);
@@ -284,7 +288,7 @@ export default function Desempenho() {
                             }
                           }
                         }}
-                        style={[styles.input, { borderColor: errors[`${dia}-${index}-inicio`] ? 'red' : 'left' }]}
+                        style={[styles.input, { borderColor: errors[`${dia}-${index}-inicio`] ? '#f05656' : '#FFFFFF' }]}
                       />
                     )}
                   />
@@ -299,7 +303,7 @@ export default function Desempenho() {
                           format: 'HH:mm', // Formato de 24 horas
                         }}
                         placeholder={errors[`${dia}-${index}-fim`] ? 'Campo obrigatório' : 'Final'}
-                        placeholderTextColor={errors[`${dia}-${index}-fim`] ? 'red' : '#A9A9A9'}
+                        placeholderTextColor={errors[`${dia}-${index}-fim`] ? '#f05656' : '#A9A9A9'}
                         value={inputValues[`${dia}-${index}-fim`] || ''}
                         onChangeText={(text) => {handleInputChange(dia as keyof Horarios, index, 'fim', text);
                           onChange(text);
@@ -308,7 +312,7 @@ export default function Desempenho() {
                           }
                         }
                         }}
-                        style={[styles.input, { borderColor: errors[`${dia}-${index}-fim`] ? 'red' : 'left' }]}
+                        style={[styles.input, { borderColor: errors[`${dia}-${index}-fim`] ? '#f05656' : '#FFFFFF' }]}
                       />
                     )}
                   />
