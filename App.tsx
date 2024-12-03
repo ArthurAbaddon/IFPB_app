@@ -23,7 +23,7 @@ export default function App() {
           headerStyle: navigator.headernavigator, // Cor de fundo do cabeçalho
           headerTintColor: '#F0F0F0',
           headerTitleStyle: navigator.headertextstyle, // Estilo do título
-          headerTitle: (props) => <LogoTitle />,
+          headerTitle: () => <LogoTitle />,
           headerTitleAlign: 'center',
         }}
       >

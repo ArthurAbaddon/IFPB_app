@@ -2,38 +2,40 @@
   "expo": {
     "name": "IFPB_app",
     "slug": "IFPB_app",
-    "platforms": [
-      "ios",
-      "android"
-    ],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#101545"
-    },
+    "scheme": "ifpbapp",  
+    "userInterfaceStyle": "automatic", 
+    "newArchEnabled": true,  
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.arthursilva12.IFPB_app"
+      "package": "com.arthursilva12.IFPB_app",
+      "versionCode": 2
     },
     "web": {
+      "bundler": "metro",  
+      "output": "static",  
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "cb4bb2e0-4dbe-4bb4-91c7-5175354812db"
-      }
-    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#101545" 
+        }
+      ]
+    ],
     "owner": "arthursilva12"
   }
 }
