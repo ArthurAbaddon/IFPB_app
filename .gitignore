@@ -75,3 +75,6 @@ yarn-error.*
 *.tsbuildinfo
 
 # @end expo-cli
+
+venv/
+backend/Shreckbots-main/venv/
