@@ -76,5 +76,4 @@ yarn-error.*
 
 # @end expo-cli
 
-venv/
 backend/Shreckbots-main/venv/
